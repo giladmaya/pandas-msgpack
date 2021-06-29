@@ -2,10 +2,11 @@ sudo: false
 language: python
 
 env:
-  - PYTHON=2.7 PANDAS=0.19.2
-  - PYTHON=3.4 PANDAS=0.19.2
-  - PYTHON=3.5 PANDAS=0.19.2 COVERAGE='true'
-  - PYTHON=3.6 PANDAS='master' LINT='true'
+  - PYTHON=3.5 PANDAS=0.19.2
+  - PYTHON=3.6 PANDAS='0.24.0'
+  - PYTHON=3.7 PANDAS='master'
+  - PYTHON=3.8 PANDAS='master' COVERAGE='true'
+  - PYTHON=3.9 PANDAS='master' LINT='true'
 
 before_install:
   - echo "before_install"
