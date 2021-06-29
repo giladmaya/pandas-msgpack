@@ -1,26 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import versioneer
 import sys
 from setuptools import setup
-import pkg_resources
 from distutils.extension import Extension
-from distutils.command.build_ext import build_ext as build_ext
-
-NAME = 'pandas-msgpack'
-
-def is_platform_windows():
-    return sys.platform == 'win32' or sys.platform == 'cygwin'
-
-def is_platform_linux():
-    return sys.platform == 'linux2'
-
-def is_platform_mac():
-    return sys.platform == 'darwin'
-
-# versioning
-import versioneer
-cmdclass = versioneer.get_cmdclass()
 
 try:
     import Cython
@@ -28,12 +12,29 @@ try:
 except ImportError:
     raise ImportError("cython is required for building")
 
+NAME = 'pandas-msgpack'
+
+
+def is_platform_windows():
+    return sys.platform == 'win32' or sys.platform == 'cygwin'
+
+
+def is_platform_linux():
+    return sys.platform == 'linux2'
+
+
+def is_platform_mac():
+    return sys.platform == 'darwin'
+
+
+cmdclass = versioneer.get_cmdclass()
+
+
 # args to ignore warnings
 if is_platform_windows():
-    extra_compile_args=[]
+    extra_compile_args = []
 else:
-    extra_compile_args=['-Wno-unused-function']
-
+    extra_compile_args = ['-Wno-unused-function']
 
 if sys.byteorder == 'big':
     macros = [('__BIG_ENDIAN__', '1')]
@@ -42,26 +43,26 @@ else:
 
 extensions = []
 packer_ext = Extension('pandas_msgpack.msgpack._packer',
-                        depends=['pandas_msgpack/includes/pack.h',
-                                 'pandas_msgpack/includes/pack_template.h'],
-                        sources = ['pandas_msgpack/msgpack/_packer.pyx'],
-                        language='c++',
-                        include_dirs=['pandas_msgack/includes'],
-                        define_macros=macros,
-                        extra_compile_args=extra_compile_args)
+                       depends=['pandas_msgpack/includes/pack.h',
+                                'pandas_msgpack/includes/pack_template.h'],
+                       sources=['pandas_msgpack/msgpack/_packer.pyx'],
+                       language='c++',
+                       include_dirs=['pandas_msgack/includes'],
+                       define_macros=macros,
+                       extra_compile_args=extra_compile_args)
 unpacker_ext = Extension('pandas_msgpack.msgpack._unpacker',
-                        depends=['pandas_msgpack/includes/unpack.h',
-                                 'pandas_msgpack/includes/unpack_define.h',
-                                 'pandas_msgpack/includes/unpack_template.h'],
-                        sources = ['pandas_msgpack/msgpack/_unpacker.pyx'],
+                         depends=['pandas_msgpack/includes/unpack.h',
+                                  'pandas_msgpack/includes/unpack_define.h',
+                                  'pandas_msgpack/includes/unpack_template.h'],
+                         sources=['pandas_msgpack/msgpack/_unpacker.pyx'],
                          language='c++',
-                        include_dirs=['pandas_msgpack/includes'],
-                        define_macros=macros,
-                        extra_compile_args=extra_compile_args)
+                         include_dirs=['pandas_msgpack/includes'],
+                         define_macros=macros,
+                         extra_compile_args=extra_compile_args)
 extensions.append(packer_ext)
 extensions.append(unpacker_ext)
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # util
 # extension for pseudo-safely moving bytes into mutable buffers
 _move_ext = Extension('pandas_msgpack._move',
@@ -74,10 +75,14 @@ def readme():
     with open('README.rst') as f:
         return f.read()
 
+
 INSTALL_REQUIRES = (
     ['pandas']
 )
 
+TESTS_REQUIRE = (
+    ['pytest']
+)
 setup(
     name=NAME,
     version=versioneer.get_version(),
@@ -109,5 +114,7 @@ setup(
               'pandas_msgpack.includes',
               'pandas_msgpack.msgpack',
               'pandas_msgpack.tests'],
-    test_suite='tests',
+    test_require=TESTS_REQUIRE,
+    test_suite='pandas_msgpack.tests',
 )
+
